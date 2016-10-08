@@ -1,17 +1,14 @@
 {
   "development": {
     "username": "neo4j",
-    "password": "neo4j",
-    "host": "127.0.0.1"
+    "password": "neo4j"
   },
   "test": {
     "username": "neo4j",
-    "password": "neo4j",
-    "host": "127.0.0.1"
+    "password": "neo4j"
   },
   "production": {
     "username": "neo4j",
-    "password": "neo4j",
-    "host": "127.0.0.1"
+    "password": "neo4j"
   }
 }

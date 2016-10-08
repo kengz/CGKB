@@ -1,12 +1,15 @@
 const Promise = require('bluebird')
-const config = require('config')
 const _ = require('lomath')
 const neo4j = require('neo4j')
-Promise.promisifyAll(neo4j)
+const path = require('path')
+const dbEnvConfig = require(path.join(__dirname, '..', 'config', 'db.json'))
 
-// var neo4j = require('neo4j');
-// var db = new neo4j.GraphDatabase('http://username:password@localhost:7474');
- 
+/* istanbul ignore next */
+process.env.NODE_ENV = process.env.NODE_ENV || 'development'
+const dbConfig = _.get(dbEnvConfig, `${process.env.NODE_ENV}`)
+const db = new neo4j.GraphDatabase(`http://${dbConfig.username}:${dbConfig.password}@localhost:7474`)
+Promise.promisifyAll(db)
+
 // db.cypher({
 //     query: 'MATCH (u:User {email: {email}}) RETURN u',
 //     params: {
@@ -22,3 +25,5 @@ Promise.promisifyAll(neo4j)
 //         console.log(JSON.stringify(user, null, 4));
 //     }
 // });
+
+module.exports = db

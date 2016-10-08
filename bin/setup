@@ -40,6 +40,13 @@ else
   python3 -m spacy.en.download
 fi
 
+# install npm modules
+if [ -d ./node_modules ]; then
+  echo "Npm modules already installed"
+else
+  npm install
+fi
+
 # install neo4j
 if which neo4j >/dev/null; then
   echo "Neo4j is already installed"
@@ -66,13 +73,6 @@ then
 else
   echo "Neo4j is already started"
 fi
-
-# # install npm modules
-# if [ -d ./node_modules ]; then
-#   echo "Npm modules already installed"
-# else
-#   npm install
-# fi
 
 # copy keys file if not already exist
 # BIN_DIR=`pwd`/bin
