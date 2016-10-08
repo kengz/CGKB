@@ -1,0 +1,35 @@
+{
+  "name": "cgkb",
+  "version": "1.0.0",
+  "description": "Contextual Graph Knowledge Base",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kengz/CGKB.git"
+  },
+  "keywords": [
+    "graph",
+    "knowledge",
+    "base",
+    "ai",
+    "neo4j",
+    "spacy"
+  ],
+  "author": "kengz kengzwl@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kengz/CGKB/issues"
+  },
+  "homepage": "https://github.com/kengz/CGKB#readme",
+  "dependencies": {
+    "bluebird": "^3.4.6",
+    "config": "^1.21.0",
+    "lomath": "^0.3.0",
+    "neo4j": "^2.0.0-RC2",
+    "socket.io": "^1.5.0",
+    "socket.io-client": "^1.5.0"
+  }
+}
