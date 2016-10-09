@@ -13,6 +13,7 @@ import websocket
 from socketIO_client import SocketIO, WebsocketTransport
 from py import *
 
+
 def recv_packet_unicode(self):
     try:
         packet_text = self._connection.recv()

@@ -1,2 +1,2 @@
-# CGKB
+# CGKB [![npm version](https://badge.fury.io/js/cgkb.svg)](https://badge.fury.io/js/cgkb) [![CircleCI](https://circleci.com/gh/kengz/CGKB.svg?style=shield)](https://circleci.com/gh/kengz/CGKB) [![Code Climate](https://codeclimate.com/github/kengz/CGKB/badges/gpa.svg)](https://codeclimate.com/github/kengz/CGKB) [![Test Coverage](https://codeclimate.com/github/kengz/CGKB/badges/coverage.svg)](https://codeclimate.com/github/kengz/CGKB/coverage)
 Contextual Graph Knowledge Base

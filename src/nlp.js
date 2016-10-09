@@ -4,7 +4,7 @@ polyIO.gClient({ port: 6466 })
 var msg = {
   input: 'I like apple',
   to: 'nlp.py',
-  intent: 'parse',
+  intent: 'parse'
 }
 global.client.pass(msg)
   .then((reply) => {
