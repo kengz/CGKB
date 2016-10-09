@@ -1,11 +1,13 @@
-// assuming server is starte and ready
+// assuming server is started and ready
 const polyIO = require('poly-socketio')
 process.env.IOPORT = process.env.IOPORT || 6466
 polyIO.gClient({ port: process.env.IOPORT })
 
-function parse(inputStr) {
+// call the python spacy nlp parser via socketIO
+// output: [{text, len, tokens, noun_phrases, parse_tree, parse_list}]
+function parse(text) {
   var msg = {
-    input: inputStr,
+    input: text,
     to: 'nlp.cgkb-py',
     intent: 'parse'
   }
