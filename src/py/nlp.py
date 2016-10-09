@@ -72,7 +72,7 @@ def format_POS(token, light=False, flat=False):
 
 def POS_tree_(root, light=False):
     '''
-    Helper: generate a POS tree for a root token. 
+    Helper: generate a POS tree for a root token.
     The doc must have merge_ents(doc) ran on it.
     '''
     subtree = format_POS(root, light=light)
