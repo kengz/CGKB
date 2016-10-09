@@ -1,5 +1,5 @@
-# NLP with spaCy https://spacy.io
-from spacy.en import English
+from collections import OrderedDict
+from spacy.en import English  # NLP with spaCy https://spacy.io
 nlp = English()  # will take some time to load
 
 # Useful properties, summary of the docs from https://spacy.io
@@ -50,110 +50,80 @@ def merge_ents(doc):
     return doc
 
 
-def _NER_POS_lr_subtree(root):
-    '''Helper: generate a NER_POS subtree with left/right
-    for a root token. The doc must have merge_ents(doc)
-    ran on it.'''
-    subtree = {
-        root.text: {
-            "edge": root.dep_,
-            "tag": root.ent_type_ or root.pos_,
-            "lefts": [],
-            "rights": []
-        }
-    }
-    for l in root.lefts:
-        subtree[root.text]["lefts"].append(_NER_POS_subtree(l))
-    for r in root.rights:
-        subtree[root.text]["rights"].append(_NER_POS_subtree(r))
+def format_POS(token, light=False, flat=False):
+    '''helper: form the POS output for a token'''
+    subtree = OrderedDict([
+        ("word", token.text),
+        ("lemma", token.lemma_),  # trigger
+        ("NE", token.ent_type_),  # trigger
+        ("POS_fine", token.tag_),
+        ("POS_coarse", token.pos_),
+        ("arc", token.dep_),
+        ("modifiers", [])
+    ])
+    if light:
+        subtree.pop("lemma")
+        subtree.pop("NE")
+    if flat:
+        subtree.pop("arc")
+        subtree.pop("modifiers")
     return subtree
 
 
-def _NER_POS_subtree(root):
-    '''Helper: generate a NER_POS subtree without left/right
-    for a root token. The doc must have merge_ents(doc)
-    ran on it.'''
-    subtree = {
-        root.text: {
-            "edge": root.dep_,
-            "tag": root.ent_type_ or root.pos_,
-            "children": []
-        }
-    }
+def POS_tree_(root, light=False):
+    '''
+    Helper: generate a POS tree for a root token. 
+    The doc must have merge_ents(doc) ran on it.
+    '''
+    subtree = format_POS(root, light=light)
     for c in root.children:
-        subtree[root.text]["children"].append(_NER_POS_subtree(c))
+        subtree["modifiers"].append(POS_tree_(c))
     return subtree
 
 
-def _NER_POS_lr_tree(sent):
-    '''Helper: generate the NER_POS tree (with left/right) for a sentence'''
-    return _NER_POS_lr_subtree(sent.root)
-
-
-def _NER_POS_tree(sent):
-    '''Helper: generate the NER_POS tree for a sentence'''
-    return _NER_POS_subtree(sent.root)
-
-
-def NER_POS_lr_tree(doc):
-    '''generate the NER_POS tree (with left/right)
-    for all sentences in a doc'''
+def POS_tree(doc, light=False):
+    '''generate the POS tree for all sentences in a doc'''
     merge_ents(doc)  # merge the entities into single tokens first
-    return [_NER_POS_lr_tree(sent) for sent in doc.sents]
+    return [POS_tree_(sent.root, light=light) for sent in doc.sents]
 
 
-def NER_POS_tree(doc):
-    '''generate the NER_POS tree for all sentences in a doc'''
-    merge_ents(doc)  # merge the entities into single tokens first
-    return [_NER_POS_tree(sent) for sent in doc.sents]
-
-
-def NER_POS_tag(doc):
+def POS_tag(doc, light=False):
     '''tag the doc first by NER (merged as tokens) then
-    POS. Can be seen as the flat version of NER_POS_tree'''
+    POS. Can be seen as the flat version of POS_tree'''
     merge_ents(doc)  # merge the entities into single tokens first
-    return [(token.text, token.ent_type_ or token.pos_) for token in doc]
+    return [format_POS(token, light=light, flat=True) for token in doc]
 
 # s = "find me flights from New York to London next month"
 # doc = nlp(s)
-# NER_POS_tag(doc)
+# POS_tag(doc)
 
 
 # Primary methods
 ##########################################
 
-def parse(sentence):
+def parse_sentence(sentence):
     '''
     Main method: parse an input sentence and return the nlp properties.
     '''
     doc = nlp(sentence)
-    reply = {
-        "text": doc.text,
-        "len": len(doc),
-
-        "tokens": [token.text for token in doc],
-        "lemmas": [token.lemma_ for token in doc],
-        # "lower": [token.lower_ for token in doc],
-        # "shape": [token.shape_ for token in doc],
-
-        "NER": list(zip([token.text for token in doc.ents],
-                        [token.label_ for token in doc.ents])),
-        "noun_phrases": [token.text for token in doc.noun_chunks],
-        "pos_coarse": list(zip([token.text for token in doc],
-                               [token.pos_ for token in doc])),
-        "pos_fine": list(zip([token.text for token in doc],
-                             [token.tag_ for token in doc])),
-        "NER_POS_tree": NER_POS_tree(doc),
-        "NER_POS_tag": NER_POS_tag(doc)
-    }
+    reply = OrderedDict([
+        ("text", doc.text),
+        ("len", len(doc)),
+        ("tokens", [token.text for token in doc]),
+        ("noun_phrases", [token.text for token in doc.noun_chunks]),
+        ("POS_tree", POS_tree(doc)),
+        ("POS_tag", POS_tag(doc))
+    ])
     return reply
 
-# res = parse("find me flights from New York to London next month.")
+# res = parse_sentence("find me flights from New York to London next month.")
 
 
-def parsedoc(input):
+def parse(input):
     '''
     parse for multi-sentences; split and apply parse in a list.
     '''
     doc = nlp(input, tag=False, entity=False)
-    return [parse(sent.text) for sent in doc.sents]
+    return [parse_sentence(sent.text) for sent in doc.sents]
+
+# print(parse("Bob brought the pizza to Alice. I saw the man with glasses."))
