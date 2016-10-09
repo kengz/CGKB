@@ -1,18 +1,27 @@
+// assuming server is starte and ready
 const polyIO = require('poly-socketio')
-polyIO.gClient({ port: 6466 })
+process.env.IOPORT = process.env.IOPORT || 6466
+polyIO.gClient({ port: process.env.IOPORT })
 
-var msg = {
-  input: 'Bob Brought the pizza to Alice. I saw the man with glasses.',
-  // input: 'I saw the man with glasses.',
-  // input: 'I am eating an apple.',
-  to: 'nlp.cgkb-py',
-  intent: 'parse'
-  // intent: 'parsedoc'
-  // intent: 'NER_POS_tree'
+function parse(inputStr) {
+  var msg = {
+    input: inputStr,
+    to: 'nlp.cgkb-py',
+    intent: 'parse'
+  }
+  return global.client.pass(msg)
+    .then((reply) => {
+      return reply.output
+    })
 }
-global.client.pass(msg)
-  .then((reply) => {
-    console.log(JSON.stringify(reply.output[0].POS_tree, null, 2))
-    console.log(JSON.stringify(reply.output[0].POS_tag, null, 2))
-    console.log(reply)
-  })
+
+// parse('Bob Brought the pizza to Alice.')
+//   .then((output) => {
+//     console.log(output)
+//     console.log(JSON.stringify(output[0].parse_tree, null, 2))
+//       // console.log(JSON.stringify(output[0].parse_list, null, 2))
+//   })
+
+module.exports = {
+  parse: parse
+}

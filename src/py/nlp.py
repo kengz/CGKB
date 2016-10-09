@@ -81,21 +81,21 @@ def POS_tree_(root, light=False):
     return subtree
 
 
-def POS_tree(doc, light=False):
+def parse_tree(doc, light=False):
     '''generate the POS tree for all sentences in a doc'''
     merge_ents(doc)  # merge the entities into single tokens first
     return [POS_tree_(sent.root, light=light) for sent in doc.sents]
 
 
-def POS_tag(doc, light=False):
+def parse_list(doc, light=False):
     '''tag the doc first by NER (merged as tokens) then
-    POS. Can be seen as the flat version of POS_tree'''
+    POS. Can be seen as the flat version of parse_tree'''
     merge_ents(doc)  # merge the entities into single tokens first
     return [format_POS(token, light=light, flat=True) for token in doc]
 
 # s = "find me flights from New York to London next month"
 # doc = nlp(s)
-# POS_tag(doc)
+# parse_list(doc)
 
 
 # Primary methods
@@ -111,8 +111,8 @@ def parse_sentence(sentence):
         ("len", len(doc)),
         ("tokens", [token.text for token in doc]),
         ("noun_phrases", [token.text for token in doc.noun_chunks]),
-        ("POS_tree", POS_tree(doc)),
-        ("POS_tag", POS_tag(doc))
+        ("parse_tree", parse_tree(doc)),
+        ("parse_list", parse_list(doc))
     ])
     return reply
 
