@@ -1,5 +1,5 @@
 const Promise = require('bluebird')
-const _ = require('lomath')
+const _ = require('lodash')
 const neo4j = require('neo4j')
 const path = require('path')
 const dbEnvConfig = require(path.join(__dirname, '..', 'config', 'db.json'))

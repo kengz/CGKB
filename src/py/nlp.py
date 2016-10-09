@@ -141,6 +141,3 @@ def parsedoc(input):
   '''
   doc = nlp(input, tag=False, entity=False)
   return [parse(sent.text) for sent in doc.sents]
-
-res = parsedoc("find me flights from New York to London next month.")
-print(res)

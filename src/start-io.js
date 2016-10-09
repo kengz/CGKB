@@ -1,6 +1,6 @@
 // The socket.io server and polyglot clients. Called by scripts/_init.js
 const { spawn } = require('child_process')
-const _ = require('lomath')
+const _ = require('lodash')
 const path = require('path')
 const polyIO = require('poly-socketio')
 const log = require(path.join(__dirname, 'log'))
@@ -8,13 +8,13 @@ process.env.IOPORT = process.env.IOPORT || 6466
 
 // import other languages via child_process
 var ioClientCmds = {
-    python3: {
-      // install_dependency: "python3 -m pip install socketIO-client",
-      client: path.join(__dirname, 'client.py')
-    }
+  python3: {
+    // install_dependency: "python3 -m pip install socketIO-client",
+    client: path.join(__dirname, 'client.py')
   }
+}
 
-const CLIENT_COUNT = 2
+const CLIENT_COUNT = 1 // only py client is vital
 
 /**
  * Helper: called from within ioServer after its setup.
