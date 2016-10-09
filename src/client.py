@@ -88,7 +88,7 @@ def correctReply(reply, msg):
 IOPORT = os.environ.get('IOPORT', '6466')
 client = SocketIO('localhost', int(IOPORT))
 # the id of this script for io client registration
-ioid = 'py'
+ioid = 'cgkb-py'
 # first join for serialization
 client.emit('join', ioid)
 client.on('disconnect', client.disconnect)

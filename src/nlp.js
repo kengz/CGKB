@@ -5,7 +5,7 @@ var msg = {
   input: 'Bob Brought the pizza to Alice. I saw the man with glasses.',
   // input: 'I saw the man with glasses.',
   // input: 'I am eating an apple.',
-  to: 'nlp.py',
+  to: 'nlp.cgkb-py',
   intent: 'parse'
   // intent: 'parsedoc'
   // intent: 'NER_POS_tree'
