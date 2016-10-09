@@ -33,9 +33,10 @@ else
 fi
 
 # install pip modules
-if python3 -m pip show spacy >/dev/null; then
+if python3 -m pip show spacy socketIO-client >/dev/null; then
   echo "Pip modules already installed"
 else
+  python3 -m pip install -U socketIO-client
   python3 -m pip install -U spacy
   python3 -m spacy.en.download
 fi

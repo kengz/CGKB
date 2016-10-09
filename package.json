@@ -4,6 +4,7 @@
   "description": "Contextual Graph Knowledge Base",
   "main": "index.js",
   "scripts": {
+    "start": "node src/start-io.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -29,7 +30,8 @@
     "config": "^1.21.0",
     "lomath": "^0.3.0",
     "neo4j": "^2.0.0-RC2",
+    "poly-socketio": "^1.0.1",
     "socket.io": "^1.5.0",
-    "socket.io-client": "^1.5.0"
+    "winston": "^2.2.0"
   }
 }
