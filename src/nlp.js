@@ -1,29 +1,9 @@
-// assuming server is started and ready
-const polyIO = require('poly-socketio')
-process.env.IOPORT = process.env.IOPORT || 6466
-polyIO.gClient({ port: process.env.IOPORT })
+const spacyNLP = require('spacy-nlp')
+const nlp = spacyNLP.nlp
 
-// call the python spacy nlp parser via socketIO
-// output: [{text, len, tokens, noun_phrases, parse_tree, parse_list}]
-function parse(text) {
-  var msg = {
-    input: text,
-    to: 'nlp.cgkb-py',
-    intent: 'parse'
-  }
-  return global.client.pass(msg)
-    .then((reply) => {
-      return reply.output
-    })
-}
-
-// parse('Bob Brought the pizza to Alice.')
-//   .then((output) => {
-//     console.log(output)
-//     console.log(JSON.stringify(output[0].parse_tree, null, 2))
-//       // console.log(JSON.stringify(output[0].parse_list, null, 2))
-//   })
-
-module.exports = {
-  parse: parse
-}
+// Note you can pass multiple sentences concat in one string.
+nlp.parse('Bob Brought the pizza to Alice.')
+  .then((output) => {
+    console.log(output)
+    // console.log(JSON.stringify(output[0].parse_tree, null, 2))
+  })

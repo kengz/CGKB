@@ -4,7 +4,7 @@
   "description": "Contextual Graph Knowledge Base",
   "main": "index.js",
   "scripts": {
-    "start": "node src/start-io.js",
+    "start": "node src/nlp-server.js",
     "test": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha"
   },
   "repository": {
@@ -30,8 +30,7 @@
     "config": "^1.21.0",
     "lodash": "^4.16.4",
     "neo4j": "^2.0.0-RC2",
-    "poly-socketio": "^1.0.1",
-    "socket.io": "^1.5.0",
+    "spacy-nlp": "^1.0.1",
     "winston": "^2.2.0"
   },
   "devDependencies": {
