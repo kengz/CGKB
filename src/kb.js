@@ -106,8 +106,16 @@ function getEdge(propA, propB, propE) {
     params: { propA: propA, propB: propB, propE: propE }
   }
 }
+
 // function updateEdge() {}
-// function removeEdge() {}
+
+function removeEdge(propA, propB, propE) {
+  var query = `MATCH (a${filterize(propA, 'propA')})-[e${filterize(propE, 'propE')}]->(b${filterize(propB, 'propB')}) DELETE e`
+  return {
+    query: query,
+    params: { propA: propA, propB: propB, propE: propE }
+  }
+}
 
 
 var label = "PERSON"
@@ -122,13 +130,14 @@ var edgeProp = { name: "Evolution", label: "BECOME" }
 // var qp = removeNode(prop)
 // var qp = updateNode(prop, setProp, timestamp)
 // var qp = addEdge(prop, setProp, edgeProp)
-var qp = getEdge(prop, setProp, edgeProp)
-console.log(qp)
+// var qp = getEdge(prop, setProp, edgeProp)
+// var qp = removeEdge(prop, setProp, edgeProp)
+// console.log(qp)
 
-db.cypherAsync(qp)
-  .then((res) => {
-    console.log(res)
-  })
+// db.cypherAsync(qp)
+//   .then((res) => {
+//     console.log(res)
+//   })
 
 // a good idea to separate them into indep script
 function clearDb() {
