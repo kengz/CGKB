@@ -99,8 +99,14 @@ function addEdge(propA, propB, propE, timestamp = new Date().toJSON()) {
   }
 }
 
+function getEdge(propA, propB, propE) {
+  var query = `MATCH (a${filterize(propA, 'propA')})-[e${filterize(propE, 'propE')}]->(b${filterize(propB, 'propB')}) RETURN e`
+  return {
+    query: query,
+    params: { propA: propA, propB: propB, propE: propE }
+  }
+}
 // function updateEdge() {}
-// function getEdge() {}
 // function removeEdge() {}
 
 
@@ -108,7 +114,7 @@ var label = "PERSON"
 var prop = { name: "Alice", email: "alice@example.com", label: label }
 var setProp = { name: "Alice", email: "bob@example.com", label: "STORY" }
 var timestamp = new Date().toJSON()
-var edgeProp = { name: "Evolution", label: "BECOME"}
+var edgeProp = { name: "Evolution", label: "BECOME" }
 
 // ohh shit allow for label update too
 // var qp = addNode(prop, timestamp)
@@ -116,12 +122,13 @@ var edgeProp = { name: "Evolution", label: "BECOME"}
 // var qp = removeNode(prop)
 // var qp = updateNode(prop, setProp, timestamp)
 // var qp = addEdge(prop, setProp, edgeProp)
-// console.log(qp)
+var qp = getEdge(prop, setProp, edgeProp)
+console.log(qp)
 
-// db.cypherAsync(qp)
-//   .then((res) => {
-//     console.log(res)
-//   })
+db.cypherAsync(qp)
+  .then((res) => {
+    console.log(res)
+  })
 
 // a good idea to separate them into indep script
 function clearDb() {
