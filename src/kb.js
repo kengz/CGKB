@@ -38,23 +38,35 @@ function labelize(label) {
   return (!label) ? '' : `:${label}`
 }
 
-function labelizeUpdate(findProp, setProp) {
+function filterize(prop, propName = 'prop') {
+  return `${labelize(prop.label)} ${literalize(prop, propName)}`
+}
+
+function labelizeUpdate(findProp, setProp, variable = 'a') {
   var findLabel = labelize(findProp.label)
   var setLabel = labelize(setProp.label)
   if (findLabel && findLabel !== setLabel) {
-    return `REMOVE a${findLabel} SET a${setLabel}`
+    return `REMOVE ${variable}${findLabel} SET ${variable}${setLabel}`
   } else {
     return ''
   }
 }
 
 // CRUD methods:
-// addNode, removeNode, getNode, updateNode
-// addEdge, removeEdge, getEdge, updateEdge
-// addGraph, removeGraph, getGraph (compositional from above), updateGraph
+// addNode, getNode, updateNode, removeNode
+// addEdge, getEdge, updateEdge, removeEdge
+// addGraph, getGraph (compositional from above), updateGraph, removeGraph
 
 function addNode(prop, timestamp = new Date().toJSON()) {
-  var query = `MERGE (a${labelize(prop.label)} ${literalize(prop)}) ON CREATE SET a={prop}, a.created_at=${JSON.stringify(timestamp)}, a.updated_at=${JSON.stringify(timestamp)} ON MATCH SET a += {prop}, a.updated_at=${JSON.stringify(timestamp)} RETURN a`
+  var query = `MERGE (a${filterize(prop)}) ON CREATE SET a={prop}, a.created_at=${JSON.stringify(timestamp)}, a.updated_at=${JSON.stringify(timestamp)} ON MATCH SET a += {prop}, a.updated_at=${JSON.stringify(timestamp)} RETURN a`
+  return {
+    query: query,
+    params: { prop: prop }
+  }
+}
+
+function getNode(prop) {
+  var query = `MATCH (a${filterize(prop)}) RETURN a`
   return {
     query: query,
     params: { prop: prop }
@@ -62,31 +74,24 @@ function addNode(prop, timestamp = new Date().toJSON()) {
 }
 
 function updateNode(findProp, setProp, timestamp = new Date().toJSON()) {
-  var query = `MERGE (a${labelize(prop.label)} ${literalize(findProp, "findProp")}) ON CREATE SET a={setProp}, a.created_at=${JSON.stringify(timestamp)}, a.updated_at=${JSON.stringify(timestamp)} ON MATCH SET a += {setProp}, a.updated_at=${JSON.stringify(timestamp)} ${labelizeUpdate(findProp, setProp)} RETURN a`
+  var query = `MATCH (a${filterize(findProp, "findProp")}) SET a += {setProp}, a.updated_at=${JSON.stringify(timestamp)} ${labelizeUpdate(findProp, setProp)} RETURN a`
   return {
     query: query,
     params: { findProp: findProp, setProp: setProp }
   }
 }
 
-function getNode(prop) {
-  var query = `MATCH (a${labelize(prop.label)} ${literalize(prop)}) RETURN a`
-  return {
-    query: query,
-    params: { prop: prop }
-  }
-}
-
 function removeNode(prop) {
-  var query = `MATCH (a${labelize(prop.label)} ${literalize(prop)}) DETACH DELETE a`
+  var query = `MATCH (a${filterize(prop)}) DETACH DELETE a`
   return {
     query: query,
     params: { prop: prop }
   }
 }
 
-
-// function addEdge(propA, propB, propE, timestamp = new Date().toJSON()) {}
+function addEdge(propA, propB, propE, timestamp = new Date().toJSON()) {
+  var query = `MATCH (a${filterize(propA, 'propA')}), (b${filterize(propB, 'propB')}) MERGE (a)-[e${filterize(propE, 'propE')}]->(b)`
+}
 // function updateEdge() {}
 // function getEdge() {}
 // function removeEdge() {}
@@ -99,8 +104,9 @@ var timestamp = new Date().toJSON()
 
 // ohh shit allow for label update too
 // var qp = addNode(prop, timestamp)
-// var qp = updateNode(prop, setProp, timestamp)
+// var qp = getNode(prop)
 // var qp = removeNode(prop)
+// var qp = updateNode(prop, setProp, timestamp)
 // console.log(qp)
 
 // db.cypherAsync(qp)
