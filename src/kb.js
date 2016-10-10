@@ -89,9 +89,16 @@ function removeNode(prop) {
   }
 }
 
+// shall create edge only, thus if fail to find nodes, give up
+// creating edge and ndoe is the job of a graph op, not edge op
 function addEdge(propA, propB, propE, timestamp = new Date().toJSON()) {
-  var query = `MATCH (a${filterize(propA, 'propA')}), (b${filterize(propB, 'propB')}) MERGE (a)-[e${filterize(propE, 'propE')}]->(b)`
+  var query = `MATCH (a${filterize(propA, 'propA')}), (b${filterize(propB, 'propB')}) MERGE (a)-[e${filterize(propE, 'propE')}]->(b) ON CREATE SET e={propE}, e.created_at=${JSON.stringify(timestamp)}, e.updated_at=${JSON.stringify(timestamp)} ON MATCH SET e += {propE}, e.updated_at=${JSON.stringify(timestamp)} RETURN e`
+  return {
+    query: query,
+    params: { propA: propA, propB: propB, propE: propE }
+  }
 }
+
 // function updateEdge() {}
 // function getEdge() {}
 // function removeEdge() {}
@@ -101,12 +108,14 @@ var label = "PERSON"
 var prop = { name: "Alice", email: "alice@example.com", label: label }
 var setProp = { name: "Alice", email: "bob@example.com", label: "STORY" }
 var timestamp = new Date().toJSON()
+var edgeProp = { name: "Evolution", label: "BECOME"}
 
 // ohh shit allow for label update too
 // var qp = addNode(prop, timestamp)
 // var qp = getNode(prop)
 // var qp = removeNode(prop)
 // var qp = updateNode(prop, setProp, timestamp)
+// var qp = addEdge(prop, setProp, edgeProp)
 // console.log(qp)
 
 // db.cypherAsync(qp)
