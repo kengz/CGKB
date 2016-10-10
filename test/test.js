@@ -1,12 +1,12 @@
 const Promise = require('bluebird')
 const chai = require('chai')
 const should = chai.should()
+const cgkb = require('../index')
 
-// describe('start poly-socketio', () => {
-//   var ioPromise = startIO()
+describe('DB auth', () => {
+  cgkb.db
 
-//   it('resolve global.ioPromise when all joined', () => {
-//     globalClient = polyIO.gClient({ port: process.env.IOPORT })
-//     return ioPromise
-//   })
-// })
+  it('should pass', () => {
+    (1).should.eq(1)
+  })
+})
