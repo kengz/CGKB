@@ -3,8 +3,8 @@ const _ = require('lodash')
 const path = require('path')
 const db = require(path.join(__dirname, 'db'))
 
-// label: 'entity type:, PERSON etc. Easy for edge visualization',
 var prop = {
+  // label: 'entity type:, PERSON etc. Easy for edge visualization',
   created_at: 'ISO',
   updated_at: 'ISO',
   type: 'data type',
@@ -38,38 +38,47 @@ function labelize(label) {
   return (!label) ? '' : `:${label}`
 }
 
-function addNode(prop, label, timestamp = new Date().toJSON()) {
-  var query = `MERGE (a${labelize(label)} ${literalize(prop)}) ON CREATE SET a={prop}, a.created_at=${JSON.stringify(timestamp)}, a.updated_at=${JSON.stringify(timestamp)} ON MATCH SET a += {prop}, a.updated_at=${JSON.stringify(timestamp)} RETURN a`
-  return {
-    query: query,
-    params: { prop: prop }
+function labelizeUpdate(findProp, setProp) {
+  var findLabel = labelize(findProp.label)
+  var setLabel = labelize(setProp.label)
+  if (findLabel && findLabel !== setLabel) {
+    return `REMOVE a${findLabel} SET a${setLabel}`
+  } else {
+    return ''
   }
 }
-
 
 // CRUD methods:
 // addNode, removeNode, getNode, updateNode
 // addEdge, removeEdge, getEdge, updateEdge
 // addGraph, removeGraph, getGraph (compositional from above), updateGraph
 
-function updateNode(findProp, setProp, label, timestamp = new Date().toJSON()) {
-  var query = `MERGE (a${labelize(label)} ${literalize(findProp, "findProp")}) ON CREATE SET a={setProp}, a.created_at=${JSON.stringify(timestamp)}, a.updated_at=${JSON.stringify(timestamp)} ON MATCH SET a += {setProp}, a.updated_at=${JSON.stringify(timestamp)} RETURN a`
+function addNode(prop, timestamp = new Date().toJSON()) {
+  var query = `MERGE (a${labelize(prop.label)} ${literalize(prop)}) ON CREATE SET a={prop}, a.created_at=${JSON.stringify(timestamp)}, a.updated_at=${JSON.stringify(timestamp)} ON MATCH SET a += {prop}, a.updated_at=${JSON.stringify(timestamp)} RETURN a`
+  return {
+    query: query,
+    params: { prop: prop }
+  }
+}
+
+function updateNode(findProp, setProp, timestamp = new Date().toJSON()) {
+  var query = `MERGE (a${labelize(prop.label)} ${literalize(findProp, "findProp")}) ON CREATE SET a={setProp}, a.created_at=${JSON.stringify(timestamp)}, a.updated_at=${JSON.stringify(timestamp)} ON MATCH SET a += {setProp}, a.updated_at=${JSON.stringify(timestamp)} ${labelizeUpdate(findProp, setProp)} RETURN a`
   return {
     query: query,
     params: { findProp: findProp, setProp: setProp }
   }
 }
 
-function getNode(prop, label) {
-  var query = `MATCH (a${labelize(label)} ${literalize(prop)}) RETURN a`
+function getNode(prop) {
+  var query = `MATCH (a${labelize(prop.label)} ${literalize(prop)}) RETURN a`
   return {
     query: query,
     params: { prop: prop }
   }
 }
 
-function removeNode(prop, label) {
-  var query = `MATCH (a${labelize(label)} ${literalize(prop)}) DETACH DELETE a`
+function removeNode(prop) {
+  var query = `MATCH (a${labelize(prop.label)} ${literalize(prop)}) DETACH DELETE a`
   return {
     query: query,
     params: { prop: prop }
@@ -77,20 +86,29 @@ function removeNode(prop, label) {
 }
 
 
-var prop = { name: "Alice", email: "alice@example.com" }
-var setProp = { name: "Alice", email: "bob@example.com" }
-var timestamp = new Date().toJSON()
+// function addEdge(propA, propB, propE, timestamp = new Date().toJSON()) {}
+// function updateEdge() {}
+// function getEdge() {}
+// function removeEdge() {}
+
+
 var label = "PERSON"
-var qp = addNode(prop, label, timestamp)
-  // var qp = updateNode(prop, setProp, label, timestamp)
-  // var qp = removeNode(prop, label)
-  // console.log(qp)
+var prop = { name: "Alice", email: "alice@example.com", label: label }
+var setProp = { name: "Alice", email: "bob@example.com", label: "STORY" }
+var timestamp = new Date().toJSON()
 
-db.cypherAsync(qp)
-  .then((res) => {
-    console.log(res)
-  })
+// ohh shit allow for label update too
+// var qp = addNode(prop, timestamp)
+// var qp = updateNode(prop, setProp, timestamp)
+// var qp = removeNode(prop)
+// console.log(qp)
 
+// db.cypherAsync(qp)
+//   .then((res) => {
+//     console.log(res)
+//   })
+
+// a good idea to separate them into indep script
 function clearDb() {
   return db.cypherAsync(`MATCH (u) DETACH DELETE u`)
 }
