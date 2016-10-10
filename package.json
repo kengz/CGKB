@@ -4,8 +4,9 @@
   "description": "Contextual Graph Knowledge Base",
   "main": "index.js",
   "scripts": {
-    "start": "node src/nlp-server.js",
-    "test": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha"
+    "start": "node src/nlp.js",
+    "test": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha",
+    "server": "node src/nlp-server.js"
   },
   "repository": {
     "type": "git",
@@ -30,7 +31,7 @@
     "config": "^1.21.0",
     "lodash": "^4.16.4",
     "neo4j": "^2.0.0-RC2",
-    "spacy-nlp": "^1.0.1",
+    "spacy-nlp": "^1.0.2",
     "winston": "^2.2.0"
   },
   "devDependencies": {
