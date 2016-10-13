@@ -147,6 +147,27 @@ function addGraph(propTriples, timestamp = new Date().toJSON()) {
   return queries
 }
 
+function getGraph(propTriples) {
+  var queries = _.flatMap(propTriples, (propTriple) => {
+    var [propFrom, propTo, prop] = propTriple
+    return [
+      getNode(propFrom),
+      getNode(propTo),
+      getEdge(propFrom, propTo, prop)
+    ]
+  })
+  return queries
+}
+
+// makes no sense
+// function updateGraph() {}
+
+// need only specify the nodes
+function removeGraph(nodeProps) {
+  var queries = _.map(nodeProps, removeNode)
+  return queries
+}
+
 var propA = { name: "Alice", email: "alice@example.com", label: "PERSON" }
 var propB = { name: "Bob", email: "bob@example.com", label: "PERSON" }
 var propAB = { name: "love-love", label: "LOVE" }
@@ -155,7 +176,10 @@ var graph = [
   [propA, propB, propAB],
   [propB, propA, propBA]
 ]
-var qp = addGraph(graph)
+
+// var qp = addGraph(graph)
+// var qp = getGraph(graph)
+// var qp = removeGraph([propA, propB])
 
 db.cypherAsync(qp)
   .then((res) => {
