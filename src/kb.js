@@ -3,21 +3,15 @@ const _ = require('lodash')
 const path = require('path')
 const db = require(path.join(__dirname, 'db'))
 
+// suggested prop keys
 var prop = {
-  // label: 'entity type:, PERSON etc. Easy for edge visualization',
-  created_at: 'ISO',
-  updated_at: 'ISO',
-  type: 'data type',
+  label: 'entity type:, PERSON etc. Easy for edge visualization',
   name: 'easy for node visualization'
-    // <any key>: as long as you keep track of the schema
+  type: 'data type',
+  // <any key>: as long as you keep track of the schema
 }
 
-// console.log(prop)
-// timestamp = _.pick(prop, 'created_at')
-// _.unset(prop, 'created_at')
-// console.log(prop)
-
-
+// -------------------------------------------------------------
 // helpers
 
 function literalize(prop, propName = 'prop') {
@@ -62,11 +56,10 @@ function updateEdgeLabel(findProp, setProp) {
   }
 }
 
-// CRUD methods:
-// addNode, getNode, updateNode, removeNode
-// addEdge, getEdge, updateEdge, removeEdge
-// addGraph, getGraph (compositional from above), updateGraph, removeGraph
+// -------------------------------------------------------------
+// CRUD methods for Node, Edge, Graph(no updateGraph cuz it makes no sense)
 
+// will not add duplicates, but update if already added
 function addNode(prop, timestamp = new Date().toJSON()) {
   var query = `MERGE (a${filterize(prop)}) ON CREATE SET a={prop}, a.created_at=${JSON.stringify(timestamp)}, a.updated_at=${JSON.stringify(timestamp)} ON MATCH SET a += {prop}, a.updated_at=${JSON.stringify(timestamp)} RETURN a`
   return {
@@ -100,7 +93,7 @@ function removeNode(prop) {
 }
 
 // shall create edge only, thus if fail to find nodes, give up
-// creating edge and ndoe is the job of a graph op, not edge op
+// creating edge and node together is the job of a graph op instead
 function addEdge(propFrom, propTo, prop, timestamp = new Date().toJSON()) {
   var query = `MATCH (a${filterize(propFrom, 'propFrom')}), (b${filterize(propTo, 'propTo')}) MERGE (a)-[e${filterize(prop, 'prop')}]->(b) ON CREATE SET e={prop}, e.created_at=${JSON.stringify(timestamp)}, e.updated_at=${JSON.stringify(timestamp)} ON MATCH SET e += {prop}, e.updated_at=${JSON.stringify(timestamp)} RETURN e`
   return {
@@ -133,8 +126,7 @@ function removeEdge(propFrom, propTo, prop) {
   }
 }
 
-// need to be natural, but also data efficient tho
-// prop triple: from, to, edge
+// propTriple: from, to, edge, so edge can be left out for default later
 function addGraph(propTriples, timestamp = new Date().toJSON()) {
   var queries = _.flatMap(propTriples, (propTriple) => {
     var [propFrom, propTo, prop] = propTriple
@@ -162,11 +154,29 @@ function getGraph(propTriples) {
 // makes no sense
 // function updateGraph() {}
 
-// need only specify the nodes
+// need only specify the nodes to delete a graph
 function removeGraph(nodeProps) {
   var queries = _.map(nodeProps, removeNode)
   return queries
 }
+
+// -------------------------------------------------------------
+// clear DB: whole or test only
+
+// a good idea to separate them into indep script
+function clearDb() {
+  return db.cypherAsync(`MATCH (u) DETACH DELETE u`)
+}
+
+function clearTestDb() {
+  return db.cypherAsync(`MATCH (a) WHERE ANY(x IN labels(a) WHERE x =~ "(?i)^test_.*") DETACH DELETE a`)
+}
+
+// clearDb()
+//   .then(console.log)
+
+// -------------------------------------------------------------
+// demo
 
 var propA = { name: "Alice", email: "alice@example.com", label: "PERSON" }
 var propB = { name: "Bob", email: "bob@example.com", label: "PERSON" }
@@ -185,7 +195,6 @@ db.cypherAsync(qp)
   .then((res) => {
     console.log(res)
   })
-
 
 // var label = "PERSON"
 // var prop = { name: "Alice", email: "alice@example.com", label: label }
@@ -210,48 +219,38 @@ db.cypherAsync(qp)
 //     console.log(res)
 //   })
 
-// a good idea to separate them into indep script
-function clearDb() {
-  return db.cypherAsync(`MATCH (u) DETACH DELETE u`)
-}
 
-function clearTestDb() {
-  return db.cypherAsync(`MATCH (a) WHERE ANY(x IN labels(a) WHERE x =~ "(?i)^test_.*") DETACH DELETE a`)
-}
-
-// clearDb()
-//   .then(console.log)
-
-var parseTrees = [{
-  "word": "like",
-  "lemma": "like",
-  "NE": "",
-  "POS_fine": "VBP",
-  "POS_coarse": "VERB",
-  "arc": "ROOT",
-  "modifiers": [{
-    "word": "I",
-    "lemma": "i",
-    "NE": "",
-    "POS_fine": "PRP",
-    "POS_coarse": "PRON",
-    "arc": "nsubj",
-    "modifiers": []
-  }, {
-    "word": "apple",
-    "lemma": "apple",
-    "NE": "",
-    "POS_fine": "NN",
-    "POS_coarse": "NOUN",
-    "arc": "dobj",
-    "modifiers": []
-  }, {
-    "word": ".",
-    "lemma": ".",
-    "NE": "",
-    "POS_fine": ".",
-    "POS_coarse": "PUNCT",
-    "arc": "punct",
-    "modifiers": []
-  }]
-}]
+// yeah can make a direct parse tree in graph
+// var parseTrees = [{
+//   "word": "like",
+//   "lemma": "like",
+//   "NE": "",
+//   "POS_fine": "VBP",
+//   "POS_coarse": "VERB",
+//   "arc": "ROOT",
+//   "modifiers": [{
+//     "word": "I",
+//     "lemma": "i",
+//     "NE": "",
+//     "POS_fine": "PRP",
+//     "POS_coarse": "PRON",
+//     "arc": "nsubj",
+//     "modifiers": []
+//   }, {
+//     "word": "apple",
+//     "lemma": "apple",
+//     "NE": "",
+//     "POS_fine": "NN",
+//     "POS_coarse": "NOUN",
+//     "arc": "dobj",
+//     "modifiers": []
+//   }, {
+//     "word": ".",
+//     "lemma": ".",
+//     "NE": "",
+//     "POS_fine": ".",
+//     "POS_coarse": "PUNCT",
+//     "arc": "punct",
+//     "modifiers": []
+//   }]
+// }]
