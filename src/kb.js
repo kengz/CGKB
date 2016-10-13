@@ -133,13 +133,42 @@ function removeEdge(propFrom, propTo, prop) {
   }
 }
 
+// need to be natural, but also data efficient tho
+// prop triple: from, to, edge
+function addGraph(propTriples, timestamp = new Date().toJSON()) {
+  var queries = _.flatMap(propTriples, (propTriple) => {
+    var [propFrom, propTo, prop] = propTriple
+    return [
+      addNode(propFrom, timestamp),
+      addNode(propTo, timestamp),
+      addEdge(propFrom, propTo, prop, timestamp)
+    ]
+  })
+  return queries
+}
 
-var label = "PERSON"
-var prop = { name: "Alice", email: "alice@example.com", label: label }
-var setProp = { name: "Alice", email: "bob@example.com", label: "STORY" }
-var timestamp = new Date().toJSON()
-var edgeProp = { name: "Evolution", label: "BECOME" }
-var setEdgeProp = { name: "Devolution", label: "WAS" }
+var propA = { name: "Alice", email: "alice@example.com", label: "PERSON" }
+var propB = { name: "Bob", email: "bob@example.com", label: "PERSON" }
+var propAB = { name: "love-love", label: "LOVE" }
+var propBA = { name: "friend-love", label: "LOVE" }
+var graph = [
+  [propA, propB, propAB],
+  [propB, propA, propBA]
+]
+var qp = addGraph(graph)
+
+db.cypherAsync(qp)
+  .then((res) => {
+    console.log(res)
+  })
+
+
+// var label = "PERSON"
+// var prop = { name: "Alice", email: "alice@example.com", label: label }
+// var setProp = { name: "Alice", email: "bob@example.com", label: "STORY" }
+// var timestamp = new Date().toJSON()
+// var edgeProp = { name: "Evolution", label: "BECOME" }
+// var setEdgeProp = { name: "Devolution", label: "WAS" }
 
 // ohh shit allow for label update too
 // var qp = addNode(prop, timestamp)
