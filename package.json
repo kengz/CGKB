@@ -1,6 +1,6 @@
 {
   "name": "cgkb",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Contextual Graph Knowledge Base",
   "main": "index.js",
   "scripts": {
