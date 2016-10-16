@@ -1,7 +1,13 @@
 const path = require('path')
 const kb = require(path.join(__dirname, 'src', 'kb'))
+const nlp = require(path.join(__dirname, 'src', 'nlp'))
+const nlpServer = require(path.join(__dirname, 'src', 'nlp-server'))
 
-module.exports = kb
+module.exports = {
+  kb: kb,
+  nlp: nlp,
+  nlpServer: nlpServer
+}
 
 
 // -------------------------------------------------------------
@@ -15,14 +21,14 @@ module.exports = kb
 //   // <any key>: as long as you keep track of the schema
 // }
 
-var propA = { name: "Alice", email: "alice@example.com", label: "PERSON" }
-var propB = { name: "Bob", email: "bob@example.com", label: "PERSON" }
-var propAB = { name: "love-love", label: "LOVE" }
-var propBA = { name: "friend-love", label: "LOVE" }
-var graph = [
-  [propA, propB, propAB],
-  [propB, propA, propBA]
-]
+// var propA = { name: "Alice", email: "alice@example.com", label: "PERSON" }
+// var propB = { name: "Bob", email: "bob@example.com", label: "PERSON" }
+// var propAB = { name: "love-love", label: "LOVE" }
+// var propBA = { name: "friend-love", label: "LOVE" }
+// var graph = [
+//   [propA, propB, propAB],
+//   [propB, propA, propBA]
+// ]
 
 // var qp = addGraph(graph)
 // var qp = getGraph(graph)
@@ -55,81 +61,3 @@ var graph = [
 //   .then((res) => {
 //     console.log(res)
 //   })
-
-const _ = require('lodash')
-
-// yeah can make a direct parse tree in graph
-var parseTree = [{
-  "word": "like",
-  "lemma": "like",
-  "NE": "",
-  "POS_fine": "VBP",
-  "POS_coarse": "VERB",
-  "arc": "ROOT",
-  "modifiers": [{
-    "word": "I",
-    "lemma": "i",
-    "NE": "",
-    "POS_fine": "PRP",
-    "POS_coarse": "PRON",
-    "arc": "nsubj",
-    "modifiers": []
-  }, {
-    "word": "apple",
-    "lemma": "apple",
-    "NE": "",
-    "POS_fine": "NN",
-    "POS_coarse": "NOUN",
-    "arc": "dobj",
-    "modifiers": []
-  }, {
-    "word": ".",
-    "lemma": ".",
-    "NE": "",
-    "POS_fine": ".",
-    "POS_coarse": "PUNCT",
-    "arc": "punct",
-    "modifiers": []
-  }]
-}]
-
-
-var nodeROOT = {
-  word: "ROOT",
-  POS_fine: "ROOT"
-}
-
-function graphifyParseTree(parseTree, nodeFrom = nodeROOT, graph = []) {
-  nodeFrom['name'] = nodeFrom['word']
-  nodeFrom['label'] = nodeFrom['POS_fine']
-  _.each(parseTree, (nodeTo) => {
-    // take out modifiers
-    var modifiers = _.get(nodeTo, 'modifiers')
-    _.remove(modifiers, (n) => {
-      return n['POS_coarse'] == 'PUNCT'
-    })
-    _.unset(nodeTo, 'modifiers')
-    nodeTo['name'] = nodeTo['word']
-    nodeTo['label'] = nodeTo['POS_fine']
-    edge = { label: nodeTo['arc'] }
-    graph.push([nodeFrom, nodeTo, edge])
-    graphifyParseTree(modifiers, nodeTo, graph)
-  })
-  return graph
-}
-
-graph = graphifyParseTree(parseTree, nodeROOT)
-console.log(graph)
-
-// clearDb()
-//   .then(console.log)
-
-var qp = kb.addGraph(graph)
-  // var qp = getGraph(graph)
-  // var qp = removeGraph([propA, propB])
-
-// console.log(qp)
-kb.db.cypherAsync(qp)
-  .then((res) => {
-    console.log(res)
-  })

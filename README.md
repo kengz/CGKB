@@ -9,7 +9,7 @@ python3 -m pip install -U socketIO-client
 python3 -m pip install -U spacy
 python3 -m spacy.en.download
 
-# neo4j
+# neo4j db, google it. Start your neo4j db first
 
 # install this npm package
 npm i --save cgkb

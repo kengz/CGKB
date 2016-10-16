@@ -6,3 +6,5 @@ process.env.IOPORT = process.env.IOPORT || 6466
 if (require.main === module) {
   spacyNLP.server({ port: process.env.IOPORT })
 }
+
+module.exports = spacyNLP.server
