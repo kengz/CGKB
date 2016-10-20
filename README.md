@@ -17,3 +17,9 @@ npm i --save cgkb
 # or run
 ./node_modules/cgkb/bin/setup
 ```
+
+## Usage
+
+*Still a work in progress*. But check out the [CGKB branch of `aiva`](https://github.com/kengz/aiva/tree/cgkb) to see how it's being used in a bot.
+
+<img alt="AIVA on Slack, Telegram" src="./source/images/syntaxnet.png" />
