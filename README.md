@@ -5,18 +5,26 @@ Contextual Graph Knowledge Base, basically a graph brain for my bot, based off [
 ## Installation
 
 ```shell
-# install spacy in python3
-python3 -m pip install -U socketIO-client
-python3 -m pip install -U spacy
-python3 -m spacy.en.download
-
-# neo4j db, google it. Start your neo4j db first
-
 # install this npm package
 npm i --save cgkb
 # or run
 ./node_modules/cgkb/bin/setup
 ```
+
+This runs the background system dependency setups. You may need `sudo`. The full script can be inspected at [bin/setup](./bin/setup)
+
+```shell
+# If you prefer to run setup manually
+# install spacy in python3
+python -m pip install -U socketIO-client
+python -m pip install -U spacy
+python -m spacy.en.download
+
+# Download and install neo4j
+# Start the neo4j server
+```
+
+Then populate your db credentials in `config/db.json`.
 
 ## Usage
 
