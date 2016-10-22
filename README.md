@@ -7,7 +7,7 @@ Contextual Graph Knowledge Base, basically a graph brain for my bot, based off [
 ```shell
 # install this npm package
 npm i --save cgkb
-# or run
+# run
 ./node_modules/cgkb/bin/setup
 ```
 
@@ -30,4 +30,10 @@ Then populate your db credentials in `config/db.json`.
 
 *Still a work in progress*. But check out the [CGKB branch of `aiva`](https://github.com/kengz/aiva/tree/cgkb) to see how it's being used in a bot.
 
-<img alt="AIVA on Slack, Telegram" src="./source/images/syntaxnet.png" />
+Log on to the Neo4j interface to see the graph.
+
+<img alt="See the graph in Neo4j" src="./source/images/syntaxnet.png" />
+
+Inspect a node for more parsed NLP info.
+
+<img alt="Inspect a node for more NLP parsing info" src="./source/images/inspect-node.png" />
