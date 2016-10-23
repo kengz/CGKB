@@ -155,15 +155,15 @@ function removeGraph(nodeProps) {
 // clear DB: whole or test only
 
 // a good idea to separate them into indep script
-function clearDb() {
+function clear() {
   return db.cypherAsync(`MATCH (u) DETACH DELETE u`)
 }
 
-function clearTestDb() {
+function clearTest() {
   return db.cypherAsync(`MATCH (a) WHERE ANY(x IN labels(a) WHERE x =~ "(?i)^test_.*") DETACH DELETE a`)
 }
 
-// clearDb()
+// clear()
 //   .then(console.log)
 
 
@@ -180,6 +180,6 @@ module.exports = {
   addGraph: addGraph,
   getGraph: getGraph,
   removeGraph: removeGraph,
-  clearDb: clearDb,
-  clearTestDb: clearTestDb
+  clear: clear,
+  clearTest: clearTest
 }
