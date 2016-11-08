@@ -1,4 +1,5 @@
 const co = require('co')
+const _ = require('lodash')
 const path = require('path')
 const kb = require(path.join(__dirname, 'kb'))
 const nlp = require(path.join(__dirname, 'nlp'))
@@ -41,13 +42,13 @@ function parseTreeToGraph(parseTree, nodeFrom = rootNode, graph = []) {
 // add knowledge to kb
 var add = co.wrap(function*(text) {
   var outputs = yield nlp.parse(text)
-  graphs = _.map(outputs, (o) => {
+  queries = _.flatMap(outputs, (o) => {
     parseTree = o.parse_tree
     graph = parseTreeToGraph(parseTree, rootNode)
     qp = kb.addGraph(graph)
     return qp
   })
-  return yield kb.db.cypherAsync(graphs)
+  return yield kb.db.cypherAsync(queries)
 })
 
 module.exports = {
@@ -56,4 +57,3 @@ module.exports = {
   nlpServer: nlpServer,
   add: add
 }
-
