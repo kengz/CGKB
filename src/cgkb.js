@@ -47,7 +47,7 @@ var add = co.wrap(function*(text) {
     qp = kb.addGraph(graph)
     return qp
   })
-  return yield kb.db.cypherAsync(qp)
+  return yield kb.db.cypherAsync(graphs)
 })
 
 module.exports = {
