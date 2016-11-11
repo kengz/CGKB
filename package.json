@@ -1,6 +1,6 @@
 {
   "name": "cgkb",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Contextual Graph Knowledge Base",
   "main": "index.js",
   "scripts": {
@@ -32,7 +32,7 @@
     "config": "^1.21.0",
     "lodash": "^4.16.4",
     "neo4j": "^2.0.0-RC2",
-    "spacy-nlp": "^1.0.6",
+    "spacy-nlp": "^1.0.7",
     "winston": "^2.2.0"
   },
   "devDependencies": {
