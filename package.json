@@ -1,11 +1,11 @@
 {
   "name": "cgkb",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Contextual Graph Knowledge Base",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha",
+    "test": "istanbul cover _mocha",
     "server": "node src/nlp-server.js"
   },
   "repository": {
@@ -32,7 +32,7 @@
     "config": "^1.21.0",
     "lodash": "^4.16.4",
     "neo4j": "^2.0.0-RC2",
-    "spacy-nlp": "^1.0.3",
+    "spacy-nlp": "^1.0.4",
     "winston": "^2.2.0"
   },
   "devDependencies": {
